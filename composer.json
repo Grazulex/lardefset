@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "php": "^8.4.0"
+        "php": "^8.3.0",
+        "laravel/framework": "^11.44.2|^12.8.1"
     },
     "require-dev": {
         "laravel/pint": "^1.22.0",
@@ -52,5 +53,12 @@
             "@test:types",
             "@test:unit"
         ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Grazulex\\Lardefset\\lardefsetServiceProvider"
+            ]
+        }
     }
 }
