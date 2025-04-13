@@ -1,6 +1,6 @@
 {
     "name": "grazulex/lardefset",
-    "description": "Default configuration for Laravel projects.",
+    "description": "Default settings for Laravel projects.",
     "keywords": ["php", "laravel", "package", "lardefset"],
     "license": "MIT",
     "authors": [
@@ -13,16 +13,16 @@
         "php": "^8.4.0"
     },
     "require-dev": {
-        "laravel/pint": "^1.18.1",
-        "pestphp/pest": "^3.5.1",
-        "pestphp/pest-plugin-type-coverage": "^3.1",
-        "phpstan/phpstan": "^2.0.0",
-        "rector/rector": "^2.0.0",
-        "symfony/var-dumper": "^7.1.6"
+        "laravel/pint": "^1.22.0",
+        "pestphp/pest": "^3.8.1",
+        "pestphp/pest-plugin-type-coverage": "^3.5",
+        "phpstan/phpstan": "^2.1.11",
+        "rector/rector": "^2.0.11",
+        "symfony/var-dumper": "^7.2.3"
     },
     "autoload": {
         "psr-4": {
-            "NunoMaduro\\SkeletonPhp\\": "src/"
+            "Grazulex\\Lardefset\\": "src/"
         }
     },
     "autoload-dev": {
