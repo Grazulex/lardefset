@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Grazulex\Lardefset\Configurables;
 
-use Grazulex\Lardefset\Contrats\Configurable;
+use Grazulex\Lardefset\Contracts\Configurable;
 use Illuminate\Support\Facades\URL;
 
 final readonly class ForceScheme implements Configurable

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Grazulex\Lardefset\Contrats;
+namespace Grazulex\Lardefset\Contracts;
 
 /**
  * @internal

@@ -32,7 +32,7 @@ final class LardefsetServiceProvider extends BaseServiceProvider
     {
         collect($this->configurables)
             ->map(fn (string $configurable) => $this->app->make($configurable))
-            ->filter(fn (string $configurable): bool => app($configurable)->enabled())
-            ->each(fn (string $configurable) => app($configurable)->configure());
+            ->filter(fn (Configurable $configurable): bool => $configurable->enabled())
+            ->each(fn (Configurable $configurable) => $configurable->configure());
     }
 }

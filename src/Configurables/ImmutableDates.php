@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\Lardefset\Configurables;
 
 use Carbon\CarbonImmutable;
-use Grazulex\Lardefset\Contrats\Configurable;
+use Grazulex\Lardefset\Contracts\Configurable;
 use Illuminate\Support\Facades\Date;
 
 final readonly class ImmutableDates implements Configurable
