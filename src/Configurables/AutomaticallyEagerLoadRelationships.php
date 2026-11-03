@@ -16,11 +16,6 @@ final readonly class AutomaticallyEagerLoadRelationships implements Configurable
 
     public function configure(): void
     {
-        // @phpstan-ignore-next-line
-        if (! method_exists(Model::class, 'automaticallyEagerLoadRelationships')) {
-            return;
-        }
-
         Model::automaticallyEagerLoadRelationships();
     }
 }
