@@ -1,45 +1,62 @@
 name: Tests
 
-on: ['push', 'pull_request']
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  ci:
+  tests:
     runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        php: ['8.3']
-        dependency-version: [prefer-lowest, prefer-stable]
 
-    name: Tests P${{ matrix.php }} - ${{ matrix.os }} - ${{ matrix.dependency-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        php: ['8.3', '8.4', '8.5']
+        laravel: ['12.*']
+        dependency-version: [prefer-lowest, prefer-stable]
+        include:
+          - laravel: '12.*'
+            testbench: '10.*'
+          - os: macos-latest
+            php: '8.4'
+            laravel: '12.*'
+            testbench: '10.*'
+            dependency-version: prefer-stable
+          - os: windows-latest
+            php: '8.4'
+            laravel: '12.*'
+            testbench: '10.*'
+            dependency-version: prefer-stable
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, fileinfo, libxml, mbstring, zip
+          coverage: none
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: dom, mbstring, zip, fileinfo
-        coverage: none
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-progress
 
-    - name: Get Composer cache directory
-      id: composer-cache
-      shell: bash
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: List installed dependencies
+        run: composer show -D
 
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: dependencies-php-${{ matrix.php }}-os-${{ matrix.os }}-version-${{ matrix.dependency-version }}-composer-${{ hashFiles('composer.json') }}
-        restore-keys: dependencies-php-${{ matrix.php }}-os-${{ matrix.os }}-version-${{ matrix.dependency-version }}-composer-
-
-    - name: Install Composer dependencies
-      run: composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist
-
-    - name: Integration Tests
-      run: php ./vendor/bin/pest
+      - name: Run tests
+        run: vendor/bin/pest --colors=always
