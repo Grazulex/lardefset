@@ -17,7 +17,7 @@ final class SetDefaultPassword implements Configurable
     public function configure(): void
     {
         Password::defaults(
-            fn (): ?password => app()->isProduction() ? Password::min(12)->max(255)->uncompromised() : null
+            fn (): ?Password => app()->isProduction() ? Password::min(12)->max(255)->uncompromised() : null
         );
     }
 }
