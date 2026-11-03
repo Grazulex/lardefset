@@ -1,7 +1,7 @@
 ------
 This package provides a wonderful **PHP Skeleton** to start building your next package idea.
 
-> **Requires [PHP 8.3+](https://php.net/releases/)**
+> **Requires [PHP 8.4+](https://php.net/releases/) and Laravel 12.8+ or 13**
 
 ⚡️ Create your package using [Composer](https://getcomposer.org):
 
