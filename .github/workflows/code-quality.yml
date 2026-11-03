@@ -1,0 +1,45 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+
+    name: Code Quality (PHP 8.4)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, fileinfo, libxml, mbstring, zip
+          coverage: pcov
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+
+      - name: Rector
+        run: composer test:refacto
+
+      - name: Pint
+        run: composer test:lint
+
+      - name: PHPStan
+        run: composer test:types
+
+      - name: Tests with 100% coverage
+        run: composer test:unit
