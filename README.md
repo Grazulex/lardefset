@@ -1,37 +1,72 @@
-------
-This package provides a wonderful **PHP Skeleton** to start building your next package idea.
+# Lardefset
+
+Sensible default settings for Laravel applications, applied automatically when the package is installed.
 
 > **Requires [PHP 8.4+](https://php.net/releases/) and Laravel 12.8+ or 13**
 
-⚡️ Create your package using [Composer](https://getcomposer.org):
+## Installation
 
 ```bash
-composer create-project nunomaduro/skeleton-php --prefer-source PackageName
+composer require grazulex/lardefset
 ```
 
-🧹 Keep a modern codebase with **Pint**:
+The service provider is auto-discovered. Every default listed below is applied on boot; nothing else is needed.
+
+## Defaults
+
+| Configurable | What it does | Default |
+| --- | --- | --- |
+| `AggressivePrefetching` | `Vite::useAggressivePrefetching()` — prefetches all Vite assets after page load. | enabled |
+| `AutomaticallyEagerLoadRelationships` | `Model::automaticallyEagerLoadRelationships()` — eager loads relationships on demand to avoid N+1 queries. | enabled |
+| `FakeSleep` | `Sleep::fake()` — `Sleep` calls return immediately. **Only when running unit tests.** | enabled |
+| `ForceScheme` | `URL::forceHttps()` — every generated URL uses `https`. | enabled |
+| `ImmutableDates` | `Date::use(CarbonImmutable::class)` — `now()`, model dates, etc. return immutable instances. | enabled |
+| `PreventStrayRequests` | `Http::preventStrayRequests()` — HTTP client calls without a fake throw. **Only when running unit tests.** | enabled |
+| `ProhibitDestructiveCommands` | `DB::prohibitDestructiveCommands()` — blocks `migrate:fresh`, `db:wipe`, etc. **in production**. | enabled |
+| `SetDefaultPassword` | `Password::defaults()` — in production: min 12, max 255 characters, not found in known data leaks. | enabled |
+| `ShouldBeStrict` | `Model::shouldBeStrict()` — prevents lazy loading, silently discarded attributes and access to missing attributes. | enabled |
+| `Unguard` | `Model::unguard()` — disables mass-assignment protection. | **disabled** |
+
+All classes live in the `Grazulex\Lardefset\Configurables` namespace.
+
+## Configuration
+
+Each default can be turned on or off from a `config/lardefset.php` file, keyed by the configurable's class name:
+
+```php
+<?php
+
+use Grazulex\Lardefset\Configurables;
+
+return [
+    // Keep plain http URLs on local environments.
+    Configurables\ForceScheme::class => env('APP_ENV') !== 'local',
+
+    // Opt in to unguarded models.
+    Configurables\Unguard::class => true,
+];
+```
+
+A configurable missing from the file keeps its default.
+
+## Development
+
 ```bash
-composer lint
+composer lint        # Pint
+composer refacto     # Rector
+composer test:types  # PHPStan
+composer test:unit   # Pest (100% coverage required)
+composer test        # everything above, in check mode
 ```
 
-✅ Run refactors using **Rector**
-```bash
-composer refacto
-```
+## Changelog
 
-⚗️ Run static analysis using **PHPStan**:
-```bash
-composer test:types
-```
+See [CHANGELOG.md](CHANGELOG.md).
 
-✅ Run unit tests using **PEST**
-```bash
-composer test:unit
-```
+## Contributing
 
-🚀 Run the entire test suite:
-```bash
-composer test
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-**Skeleton PHP** was created by **[Nuno Maduro](https://twitter.com/enunomaduro)** under the **[MIT license](https://opensource.org/licenses/MIT)**.
+## License
+
+The MIT License (MIT). See [LICENSE.md](LICENSE.md).
