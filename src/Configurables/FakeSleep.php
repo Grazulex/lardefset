@@ -4,17 +4,23 @@ declare(strict_types=1);
 
 namespace Grazulex\Lardefset\Configurables;
 
+use Grazulex\Lardefset\Concerns\ReadsSwitch;
+use Grazulex\Lardefset\Contracts\Conditional;
 use Grazulex\Lardefset\Contracts\Configurable;
 use Illuminate\Support\Sleep;
 
-final readonly class FakeSleep implements Configurable
+final readonly class FakeSleep implements Conditional, Configurable
 {
+    use ReadsSwitch;
+
     public function enabled(): bool
     {
-        $enabled = config()->boolean(sprintf('lardefset.%s', self::class), true);
-        $testing = app()->runningUnitTests();
+        return $this->switch('fake_sleep', true) && $this->applicable();
+    }
 
-        return $enabled && $testing;
+    public function applicable(): bool
+    {
+        return app()->runningUnitTests();
     }
 
     public function configure(): void

@@ -4,20 +4,29 @@ declare(strict_types=1);
 
 namespace Grazulex\Lardefset\Configurables;
 
+use Grazulex\Lardefset\Concerns\ReadsSwitch;
+use Grazulex\Lardefset\Contracts\Conditional;
 use Grazulex\Lardefset\Contracts\Configurable;
 use Illuminate\Support\Facades\DB;
 
-final readonly class ProhibitDestructiveCommands implements Configurable
+final readonly class ProhibitDestructiveCommands implements Conditional, Configurable
 {
+    use ReadsSwitch;
+
     public function enabled(): bool
     {
-        return config()->boolean(sprintf('lardefset.%s', self::class), true);
+        return $this->switch('prohibit_destructive_commands', true);
+    }
+
+    public function applicable(): bool
+    {
+        return app()->isProduction();
     }
 
     public function configure(): void
     {
         DB::prohibitDestructiveCommands(
-            app()->isProduction(),
+            $this->applicable(),
         );
     }
 }
