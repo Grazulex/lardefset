@@ -28,8 +28,17 @@ final class LardefsetServiceProvider extends BaseServiceProvider
         Configurables\Unguard::class,
     ];
 
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/lardefset.php', 'lardefset');
+    }
+
     public function boot(): void
     {
+        $this->publishes([
+            __DIR__.'/../config/lardefset.php' => config_path('lardefset.php'),
+        ], 'lardefset-config');
+
         collect($this->configurables)
             ->map(fn (string $configurable) => $this->app->make($configurable))
             ->filter(fn (Configurable $configurable): bool => $configurable->enabled())

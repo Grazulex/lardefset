@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Grazulex\Lardefset\Configurables;
 
+use Grazulex\Lardefset\Concerns\ReadsSwitch;
 use Grazulex\Lardefset\Contracts\Configurable;
 use Illuminate\Validation\Rules\Password;
 
 final class SetDefaultPassword implements Configurable
 {
+    use ReadsSwitch;
+
     public function enabled(): bool
     {
-        return config()->boolean(sprintf('lardefset.%s', self::class), true);
+        return $this->switch('password_defaults', true);
     }
 
     public function configure(): void
