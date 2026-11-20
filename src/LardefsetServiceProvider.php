@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Grazulex\Lardefset;
 
+use Grazulex\Lardefset\Commands\StatusCommand;
 use Grazulex\Lardefset\Contracts\Configurable;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -12,22 +13,6 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
  */
 final class LardefsetServiceProvider extends BaseServiceProvider
 {
-    /**
-     * @var list<class-string<Configurable>>
-     */
-    private array $configurables = [
-        Configurables\AggressivePrefetching::class,
-        Configurables\AutomaticallyEagerLoadRelationships::class,
-        Configurables\FakeSleep::class,
-        Configurables\ForceScheme::class,
-        Configurables\ImmutableDates::class,
-        Configurables\PreventStrayRequests::class,
-        Configurables\ProhibitDestructiveCommands::class,
-        Configurables\SetDefaultPassword::class,
-        Configurables\ShouldBeStrict::class,
-        Configurables\Unguard::class,
-    ];
-
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/lardefset.php', 'lardefset');
@@ -39,7 +24,13 @@ final class LardefsetServiceProvider extends BaseServiceProvider
             __DIR__.'/../config/lardefset.php' => config_path('lardefset.php'),
         ], 'lardefset-config');
 
-        collect($this->configurables)
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                StatusCommand::class,
+            ]);
+        }
+
+        collect(ConfigurableRegistry::all())
             ->map(fn (string $configurable) => $this->app->make($configurable))
             ->filter(fn (Configurable $configurable): bool => $configurable->enabled())
             ->each(fn (Configurable $configurable) => $configurable->configure());

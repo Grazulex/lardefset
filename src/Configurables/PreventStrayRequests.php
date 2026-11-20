@@ -5,19 +5,22 @@ declare(strict_types=1);
 namespace Grazulex\Lardefset\Configurables;
 
 use Grazulex\Lardefset\Concerns\ReadsSwitch;
+use Grazulex\Lardefset\Contracts\Conditional;
 use Grazulex\Lardefset\Contracts\Configurable;
 use Illuminate\Support\Facades\Http;
 
-final readonly class PreventStrayRequests implements Configurable
+final readonly class PreventStrayRequests implements Conditional, Configurable
 {
     use ReadsSwitch;
 
     public function enabled(): bool
     {
-        $enabled = $this->switch('prevent_stray_requests', true);
-        $testing = app()->runningUnitTests();
+        return $this->switch('prevent_stray_requests', true) && $this->applicable();
+    }
 
-        return $enabled && $testing;
+    public function applicable(): bool
+    {
+        return app()->runningUnitTests();
     }
 
     public function configure(): void

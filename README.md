@@ -69,6 +69,32 @@ return [
 ];
 ```
 
+## Checking the status
+
+List every configurable with its effective state in the current environment:
+
+```bash
+php artisan lardefset:status
+```
+
+```
++-------------------------------------+----------------+
+| Configurable                        | State          |
++-------------------------------------+----------------+
+| AggressivePrefetching               | enabled        |
+| AutomaticallyEagerLoadRelationships | enabled        |
+| FakeSleep                           | not applicable |
+| ForceScheme                         | disabled       |
+| ...                                 | ...            |
++-------------------------------------+----------------+
+```
+
+| State | Meaning |
+| --- | --- |
+| `enabled` | The default is applied. |
+| `disabled` | The default is turned off by its config key. |
+| `not applicable` | The default has no effect in the current environment, whatever its config key says: `FakeSleep` and `PreventStrayRequests` outside unit tests, `ProhibitDestructiveCommands` and `SetDefaultPassword` outside production. |
+
 ## Development
 
 ```bash
